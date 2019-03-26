@@ -3,9 +3,11 @@ using namespace std;
 void f(const string &code,int &i , int len , stack<string> &stck,string &convertedCode)
 {
 	string s1 = "";
-	while(i + 3 < len )
+	while(i < len )
 	{
-		if(code[i] == 'f' && code[i+1] == 'o' && code[i+2] == 'r' && (code[i+3] == ' ' || code[i+3] == '(' ))
+		int flagToPrint = 1;
+
+		if(i+3 < len && code[i] == 'f' && code[i+1] == 'o' && code[i+2] == 'r' && (code[i+3] == ' ' || code[i+3] == '(' ))
 		{
 			i = i + 3;
 			// skip all blankspaces after for keyword
@@ -82,7 +84,7 @@ void f(const string &code,int &i , int len , stack<string> &stck,string &convert
 			}
 
 			stck.push(incr);
-
+			stck.push("endFor");
 
 			//skip all spaces after for() ______ 
 			while(i<len && (code[i] == ' ' || code[i] == '\n' ))
@@ -130,7 +132,7 @@ void f(const string &code,int &i , int len , stack<string> &stck,string &convert
 			{
 				string incrTop = stck.top();
 				stck.pop();
-				if(incrTop != "")
+				if(incrTop != "") // if increament / decreeament part of for loop is not empty
 				{
 					int j = 0;
 					int incrLen = incrTop.length(); 
@@ -154,6 +156,26 @@ void f(const string &code,int &i , int len , stack<string> &stck,string &convert
 				convertedCode += "}\n";
 			}
 		}
+		else if(i+2 < len && code[i] == 'd' && code[i+1] == 'o' && (code[i+2] == ' ' || code[i+2] == '\n'))
+		{
+			i = i + 3;
+			while(i < len && (code[i] == ' ' || code[i] == '\n') ) 
+			{
+				i++;
+			}
+
+			int startingIndexOfDo = convertedCode.length();
+			stck.push(to_string(startingIndexOfDo));
+			stck.push("endDoWhile");
+
+			if(code[i]=='{')
+			{				
+				stck.push("{");
+				i++;
+			}
+			f(code,i,len,stck,convertedCode);
+		 
+		}
 		else
 		{
 			if(code[i] == '{')
@@ -163,35 +185,100 @@ void f(const string &code,int &i , int len , stack<string> &stck,string &convert
 			else if(code[i] == '}')
 			{
 				stck.pop();
-				string incrTop = stck.top();
-					
-				if(incrTop != "{") // for loop close }
+				if(!stck.empty())
 				{
-					stck.pop();
-					if(incrTop != "")
+					string Top = stck.top();
+					
+					if(Top == "endFor") // for loop close }
 					{
-						int j = 0;
-						int incrLen = incrTop.length(); 
-						while(j < incrLen)
+						stck.pop(); // pop endFor
+						string incrTop = stck.top();
+						stck.pop();
+
+						if(incrTop != "")
 						{
-							string incr = "";
-							while(j < incrLen && incrTop[j] != ',')
+							int j = 0;
+							int incrLen = incrTop.length(); 
+							while(j < incrLen)
 							{
-								incr = incr + incrTop[j];
+								string incr = "";
+								while(j < incrLen && incrTop[j] != ',')
+								{
+									incr = incr + incrTop[j];
+									j++;
+								}
 								j++;
-							}
-							j++;
-							if(incr != "")
-							{
-								//cout << incr + ";" << endl;
-								convertedCode += incr + ";\n";
+								if(incr != "")
+								{
+									//cout << incr + ";" << endl;
+									convertedCode += incr + ";\n";
+								}
 							}
 						}
+					}
+					else if(Top == "endDoWhile")
+					{
+						stck.pop(); // pop endDoWhile
+						string startingIndexOfDo1 = stck.top();
+						stck.pop();
+						int startingIndexOfDo = stoi(startingIndexOfDo1);
+						int endIndexOfDo = convertedCode.length() - 1;
+
+						i++;	// skip }
+
+						// skip all characters until while(
+						while(i < len && code[i] != '(' ) 
+						{
+							i++;
+						}
+						i++; // skip (
+
+						
+						// now store the condition of while in string 
+						// condition including () brackets within condition;
+						string condition = "";
+						int countOpening = 0;
+						while( i<len && countOpening >= 0 )
+						{
+							if(code[i] == '(')
+							{
+								countOpening++;
+							}
+							else if(code[i] == ')')
+							{
+								countOpening--;
+							}
+
+							if(countOpening >= 0)
+							{
+								condition = condition + code[i];
+							}
+							i++;
+						}
+
+						string convertedWhile = "while( " + condition + ")\n{\n";
+						while(startingIndexOfDo <= endIndexOfDo)
+						{
+							convertedWhile += convertedCode[startingIndexOfDo];
+							startingIndexOfDo++;
+						}
+						convertedWhile += "\n}\n";
+						convertedCode  += convertedWhile ;
+
+						while(i<len && code[i] == ' ')
+						{
+							i++;
+						}
+						// now 'i' is at ';'
+						flagToPrint = 0;
 					}
 				}
 			}
 			//cout << code[i];
-			convertedCode += code[i];
+			if(flagToPrint == 1)
+			{
+				convertedCode += code[i];			
+			}
 			if(code[i] == ';' || code[i] == '}')
 			{
 				//cout << endl;
@@ -200,16 +287,6 @@ void f(const string &code,int &i , int len , stack<string> &stck,string &convert
 			i++;
 		}
 	}
-	i = i + 3;
-	if(i == len)
-	{
-		//cout << code[i-3] << code[i-2] << code[i-1] << endl;
-		convertedCode += code[i-3];
-		convertedCode += code[i-2];
-		convertedCode += code[i-1];
-		convertedCode += "\n";
-	}
-
 }
 int main(int argc, char const *argv[])
 {
