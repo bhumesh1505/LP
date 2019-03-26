@@ -1,0 +1,6 @@
+int i,j,k;
+for(i=0;i<10;i++)
+for(;j<5 && k<10;)
+cout << "ok1" << endl;
+cout << "ok3" << endl;
+cout << "ok4" << endl;
