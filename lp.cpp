@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <stdio.h>
 using namespace std;
 void f(const string &code,int &i , int len , stack<string> &stck,string &convertedCode)
 {
@@ -130,6 +131,7 @@ void f(const string &code,int &i , int len , stack<string> &stck,string &convert
 
 			if(!stck.empty())
 			{
+				stck.pop(); // remove string 'endFor' 
 				string incrTop = stck.top();
 				stck.pop();
 				if(incrTop != "") // if increament / decreeament part of for loop is not empty
@@ -156,10 +158,10 @@ void f(const string &code,int &i , int len , stack<string> &stck,string &convert
 				convertedCode += "}\n";
 			}
 		}
-		else if(i+2 < len && code[i] == 'd' && code[i+1] == 'o' && (code[i+2] == ' ' || code[i+2] == '\n'))
+		else if(i+2 < len && code[i] == 'd' && code[i+1] == 'o' && (code[i+2] == ' ' || code[i+2] == '{'))
 		{
-			i = i + 3;
-			while(i < len && (code[i] == ' ' || code[i] == '\n') ) 
+			i = i + 2;
+			while(i < len && code[i] == ' ' ) 
 			{
 				i++;
 			}
@@ -262,7 +264,7 @@ void f(const string &code,int &i , int len , stack<string> &stck,string &convert
 							convertedWhile += convertedCode[startingIndexOfDo];
 							startingIndexOfDo++;
 						}
-						convertedWhile += "\n}\n";
+						convertedWhile += "}";
 						convertedCode  += convertedWhile ;
 
 						while(i<len && code[i] == ' ')
@@ -305,10 +307,11 @@ int main(int argc, char const *argv[])
 
  	stack <string> stck;
  	int len = code.length();
+
  	int i = 0;
  	string convertedCode = "";
 
-  	f(code,i,len,stck,convertedCode);   
+ 	f(code,i,len,stck,convertedCode);   
   	cout << convertedCode << endl;
 	return 0;
 }

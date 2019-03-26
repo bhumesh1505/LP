@@ -27,6 +27,57 @@ cout << "ok1" << endl;
 cout << "ok3" << endl;
 cout << "ok4" << endl;
 
+int j = 0; 
+do
+{
+	cout << "block j" << endl;
+}
+while(j<10); 
+cout << "all done !" << endl;
 
 
 
+int j=5;
+do{
+    for(i = 0 ; i < 5 ; i++)
+    {
+        cout << i << endl;
+    }
+}
+while(--j);
+
+
+
+int i ;
+for(i=0;i<5;i++)
+{
+	s1;
+	do{
+		s2;
+	}
+	while(condition);
+	s3;
+}
+s4;
+
+
+int j=5;
+do 
+    for(i = 0 ; i < 5 ; i++)
+        cout << i << endl;
+while(--j);
+return 0;
+
+
+int j=0,i=0;
+do{
+cout << "s1" << endl;
+do{
+cout << "s2" << endl;
+j++;
+}
+while(j<10);
+cout << "s3" << endl;
+}
+while(--j);
+cout << "s5" << endl;
