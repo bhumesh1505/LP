@@ -2,24 +2,29 @@
 	#include<bits/stdc++.h>
 	using namespace std;
 	int yylex();	
-	void yyerror(char *s);
+	void yyerror(string e);
 	string s;
 	stack <int> stck;
 	string flag;
 %}
 
-%token <str> FOR OP CL OP1 CL1 TEXT SC UNR DO WHILE CONTINUE
+%token <str>  IF ELSE FOR OP CL OP1 CL1 TEXT SC UNR DO WHILE CONTINUE
 
 %union{
 	char *str;
 }
 
-%type <str> s stmt for dwhile
+%type <str> s stmt for dwhile continue if else
 
 %%
 ss: 	s {cout<<s<<endl;}
-s:		for s | stmt s | dwhile s| {};
-continue:	CONTINUE SC {s=s+"goto LABEL" + $2;flag="LABEL:";}| {flag = "";};
+s:		for s | stmt s | dwhile s| if s| {};
+continue:	CONTINUE SC {s=s + "goto LABEL;\n" ; flag="LABEL:" ;}| {flag = "";};
+
+if:		IF OP TEXT CL OP1 {s = s + $1 + $2 + $3 + $4 + $5 + "\n";} s CL1 {s = s + $8;} else	;
+
+else:	ELSE OP1 {s = s + "\n" +  $1 + $2 + "\n" ;} s CL1 {s = s + $5 + "\n";} s | { s=s+"\n" ;} ;
+
 for:	FOR OP TEXT SC TEXT SC TEXT CL OP1 
 			{   s=s + $3 + ";\nwhile("+$5+"){\n";   } s continue s CL1 {   s=s+flag+$7+";\n}\n";   }
 			|
@@ -61,9 +66,9 @@ dwhile: DO OP1
 			};
 %%
 
-void yyerror(char *s)
+void yyerror(string e)
 {
-	printf("%s\n",s);
+	cout << e << endl;
 }
 int yywrap()
 {

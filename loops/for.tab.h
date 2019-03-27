@@ -48,17 +48,19 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    FOR = 258,
-    OP = 259,
-    CL = 260,
-    OP1 = 261,
-    CL1 = 262,
-    TEXT = 263,
-    SC = 264,
-    UNR = 265,
-    DO = 266,
-    WHILE = 267,
-    CONTINUE = 268
+    IF = 258,
+    ELSE = 259,
+    FOR = 260,
+    OP = 261,
+    CL = 262,
+    OP1 = 263,
+    CL1 = 264,
+    TEXT = 265,
+    SC = 266,
+    UNR = 267,
+    DO = 268,
+    WHILE = 269,
+    CONTINUE = 270
   };
 #endif
 
@@ -71,7 +73,7 @@ union YYSTYPE
 
 	char *str;
 
-#line 75 "for.tab.h" /* yacc.c:1906  */
+#line 77 "for.tab.h" /* yacc.c:1906  */
 };
 
 typedef union YYSTYPE YYSTYPE;

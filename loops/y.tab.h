@@ -57,7 +57,10 @@ extern int yydebug;
     SC = 264,
     UNR = 265,
     DO = 266,
-    WHILE = 267
+    WHILE = 267,
+    CONTINUE = 268,
+    IF = 269,
+    ELSE = 270
   };
 #endif
 /* Tokens.  */
@@ -71,6 +74,9 @@ extern int yydebug;
 #define UNR 265
 #define DO 266
 #define WHILE 267
+#define CONTINUE 268
+#define IF 269
+#define ELSE 270
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -81,7 +87,7 @@ union YYSTYPE
 
 	char *str;
 
-#line 85 "y.tab.h" /* yacc.c:1906  */
+#line 91 "y.tab.h" /* yacc.c:1906  */
 };
 
 typedef union YYSTYPE YYSTYPE;
